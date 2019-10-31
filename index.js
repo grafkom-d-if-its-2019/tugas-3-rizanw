@@ -1,6 +1,15 @@
 (function (global) {
-  var theta = 0.0, scale = 1, membesar = 1.0;
+  // var theta = 0.0, scale = 1, membesar = 1.0;
   var gl, canvas, program, program2, programCube;
+  var scale = 0.2;
+  var vec = [0, 0, 0];
+  var vecX = 0.0196;
+  var vecY = 0.0069;
+  var vecZ = 0.016;
+  var size = scale;
+  var theta = [30, 60,0];
+  var nrp = 0.183;
+
   glUtils.SL.init({ callback: function () { main(); } });
 
   var mainLinesVertices = new Float32Array([
@@ -197,20 +206,39 @@
     cube();
     gl.drawArrays(gl.LINES, 0, 24);
 
-    gl.useProgram(program);
-    var thetaLoc = gl.getUniformLocation(program, 'theta');
-    theta += 0.0183;
-    gl.uniform1f(thetaLoc, theta);
-
+    // gl.useProgram(program);
+    // var thetaLoc = gl.getUniformLocation(program, 'theta');
+    // theta += 0.0183;
+    // gl.uniform1f(thetaLoc, theta);
     // drawShapes(gl.LINE_LOOP, mainLinesVertices);
     // drawShapes(gl.LINE_LOOP, centerLinesVertices);
 
     gl.useProgram(program2);
     var scaleLoc = gl.getUniformLocation(program2, 'scale');
-    if (scale >= 1) membesar = -1;
-    else if (scale <= -1) membesar = 1;
-    scale += 0.0082 * membesar;
     gl.uniform1f(scaleLoc, scale);
+
+    var transLoc = gl.getUniformLocation(program2, 'vec');
+    if(vec[0] > 0.5*(1-size) || vec[0] < -0.5*(1-size) ){
+      vecX = vecX * -1;
+    }
+    vec[0] += vecX;
+    if(vec[1] > 0.5*(1-size) || vec[1] < -0.5*(1-size) ){
+      vecY = vecY * -1;
+    }
+    vec[1] += vecY;
+    if(vec[2] > 0.5*(1-size) || vec[2] < -0.5*(1-size) ){
+      vecZ = vecZ * -1;
+    }
+    vec[2] += vecZ;
+    gl.uniform3fv(transLoc, vec);
+
+    var thetaLoc = gl.getUniformLocation(program2, 'theta'); 
+    theta[1] += ( nrp * 3 );
+    gl.uniform3fv(thetaLoc, theta);
+
+    // if (scale >= 1) membesar = -1;
+    // else if (scale <= -1) membesar = 1;
+    // scale += 0.0082 * membesar;
 
     drawShapes(gl.TRIANGLE_FAN, TriangleVertices1);
     drawShapes(gl.TRIANGLE_FAN, TriangleVertices2);
